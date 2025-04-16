@@ -68,7 +68,7 @@ function build_sdk() {
 	SDK_PREBUILTS_PATH=${ROOT_PATH}/out/sdk/packages/ohos-sdk
 	pushd ${ROOT_PATH}
 		echo "building the latest ohos-sdk..."
-		./build.py --product-name ohos-sdk --load-test-config=false --get-warning-list=false --stat-ccache=false --compute-overlap-rate=false --deps-guard=false --generate-ninja-trace=false --gn-args skip_generate_module_list_file=true sdk_platform=linux ndk_platform=linux use_cfi=false use_thin_lto=false enable_lto_O0=true sdk_check_flag=false enable_ndk_doxygen=false archive_ndk=false sdk_for_hap_build=true
+		./build.py --product-name ohos-sdk --load-test-config=false --get-warning-list=false --stat-ccache=false --compute-overlap-rate=false --deps-guard=false --generate-ninja-trace=false --gn-args skip_generate_module_list_file=true sdk_platform=linux ndk_platform=linux use_cfi=false use_thin_lto=false enable_lto_O0=true sdk_check_flag=false enable_ndk_doxygen=false archive_ndk=false
 		if [[ "$?" -ne 0 ]]; then
 		echo "ohos-sdk build failed! You can try to use '--no-prebuilt-sdk' to skip the build of ohos-sdk."
 		exit 1
@@ -146,7 +146,7 @@ export PATH=/home/tools/command-line-tools/ohpm/bin:$PATH
 npm config set registry https://repo.huaweicloud.com/repository/npm/
 npm config set @ohos:registry https://repo.harmonyos.com/npm/
 npm config set strict-ssl false
-npm config set lockfile false
+#npm config set lockfile false
 cat $HOME/.npmrc | grep 'lockfile=false' || echo 'lockfile=false' >> $HOME/.npmrc
 if [ -d ${ROOT_PATH}/prebuilts/ohos-sdk/linux/10 ]; then
     mkdir -p ${ohos_sdk_path}
@@ -284,7 +284,7 @@ echo "start build hap..."
 cd ${arg_project}
 echo "sdk.dir=${OHOS_SDK_HOME}"  > ./local.properties
 echo "nodejs.dir=${NODE_HOME}" >> ./local.properties
-
+export LD_LIBRARY_PATH=${OHOS_SDK_HOME}/20/ets/ets1.2/build-tools/ets2panda/lib/
 echo "use sdk:"${OHOS_SDK_HOME}
 
 is_ohpm=true
@@ -415,6 +415,18 @@ echo ${arg_project}" 执行npm/ohpm install"
 if ${is_ohpm}; then
         ohpm install
         if [ ! -f "hvigorw" ]; then
+                # Historical reasons need to be compatible with NODE_HOME path issue
+                if grep -q "\${NODE_HOME}/bin/node" hvigorw ; then
+                # node home path include "bin"
+                        if [ ! -x "${NODE_HOME}/bin/node" ];then
+                        export NODE_HOME=$(dirname ${NODE_HOME})
+                        fi
+                else
+                # node home path does not include "bin"
+                        if [ -x "${NODE_HOME}/bin/node" ];then
+                        export NODE_HOME=${NODE_HOME}
+                        fi
+                fi
                 hvigorw clean --no-daemon
                 hvigorw assembleHap --mode module -p product=default -p debuggable=false --no-daemon
         else
