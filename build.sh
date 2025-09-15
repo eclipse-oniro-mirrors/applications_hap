@@ -335,7 +335,7 @@ echo "start build hap..."
 cd ${arg_project}
 echo "sdk.dir=${OHOS_SDK_HOME}"  > ./local.properties
 echo "nodejs.dir=${NODE_HOME}" >> ./local.properties
-export LD_LIBRARY_PATH=${OHOS_SDK_HOME}/20/ets/ets1.2/build-tools/ets2panda/lib/
+export LD_LIBRARY_PATH=${OHOS_SDK_HOME}/20/ets/static/build-tools/ets2panda/lib/
 echo "use sdk:"${OHOS_SDK_HOME}
 
 is_ohpm=true
