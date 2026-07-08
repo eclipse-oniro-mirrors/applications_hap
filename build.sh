@@ -143,15 +143,6 @@ fi
 
 
 # set python3
-case $(uname -m) in
-	arm64|aarch64)
-		host_cpu_prefix=arm64
-		;;
-	*)
-		host_cpu_prefix=x86
-		;;
-esac
-
 PYTHON3_DIR=$(realpath ${ROOT_PATH}/prebuilts/python/linux-${host_cpu_prefix}/* | tail -1)
 PYTHON3=${PYTHON3_DIR}/bin/python3
 PYTOHN=${PYTOHN3_DIR}/bin/python
