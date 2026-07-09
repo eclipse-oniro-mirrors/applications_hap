@@ -122,6 +122,22 @@ if [ "$arg_help" != "0" ]; then
         exit 1;
 fi
 
+
+PYTHON3_DIR=$(realpath ${ROOT_PATH}/prebuilts/python/linux-${host_cpu_prefix}/* | tail -1)
+PYTHON3=${PYTHON3_DIR}/bin/python3
+PYTHON=${PYTHON3_DIR}/bin/python
+ 	 
+if [[ ! -f "${PYTHON}" ]]; then
+ 	echo -e "\033[31m[OHOS ERROR] Please execute the build/prebuilts_download.sh \033[0m"
+ 	exit 1
+else
+ 	if [[ ! -f "${PYTHON}" ]]; then
+ 	 	ln -sf "${PYTHON3}" "${PYTHON}"
+ 	fi
+fi
+ 	 
+export PATH=${ROOT_PATH}/prebuilts/build-tools/linux-${host_cpu_prefix}/bin:${PYTHON3_DIR}/bin:/home/tools/command-line-tools/ohpm/bin:$PATH
+
 # Called in the warm-up process to ensure that the docker is the latest SDK every day
 # Called like this: ./build.sh --build_sdk
 if [ "$arg_build_sdk" == "1" ]; then
@@ -141,22 +157,7 @@ if [ "$arg_build_sdk" == "true" ]; then
     echo "set OHOS_SDK_HOME to" ${OHOS_SDK_HOME}
 fi
 
-
-# set python3
-PYTHON3_DIR=$(realpath ${ROOT_PATH}/prebuilts/python/linux-${host_cpu_prefix}/* | tail -1)
-PYTHON3=${PYTHON3_DIR}/bin/python3
-PYTOHN=${PYTOHN3_DIR}/bin/python
-
-if [[ ! -f "${PYTHON}" ]]; then
-	echo -e "\033[31m[OHOS ERROR] Please execute the build/prebuilts_download.sh \033[0m"
-	exit 1
-else
-	if [[ ! -f "${PYTHON}" ]]; then
-		ln -sf "${PYTHON3}" "${PYTHON}"
-	fi
-fi
-
-export PATH=${ROOT_PATH}/prebuilts/build-tools/linux-${host_cpu_prefix}/bin:${PYTHON3_DIR}/bin:/home/tools/command-line-tools/ohpm/bin:$PATH
+export PATH=/home/tools/command-line-tools/ohpm/bin:$PATH
 npm config set registry https://repo.huaweicloud.com/repository/npm/
 npm config set @ohos:registry https://repo.harmonyos.com/npm/
 npm config set strict-ssl false
