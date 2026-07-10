@@ -122,41 +122,22 @@ if [ "$arg_help" != "0" ]; then
         exit 1;
 fi
 
-export SOURCE_ROOT_DIR=$(cd $(dirname $0);pwd)
-case $(uname -s) in
-    Darwin)
-        HOST_DIR="darwin-$host_cpu_prefix"
-        PYTHON_DIR="darwin-$python_prefix"
-        HOST_OS="mac"
-        NODE_PLATFORM="darwin-x64"
-        ;;
-    Linux)
-        HOST_DIR="linux-$host_cpu_prefix"
-        PYTHON_DIR="linux-$python_prefix"
-        HOST_OS="linux"
-        NODE_PLATFORM="linux-$node_prefix"
-        ;;
-    *)
-        echo "\033[31m[OHOS ERROR] Unsupported host platform: $(uname -s)\033[0m"
-        RET=1
-        exit $RET
+case $(uname -m) in
+    *x86_64) _py_cpu="x86" ;;
+    *arm* | *aarch64) _py_cpu="arm64" ;;
+    *) _py_cpu="x86" ;;
 esac
-
-
-# set python3
-PYTHON3_DIR=$(realpath ${SOURCE_ROOT_DIR}/prebuilts/python/${PYTHON_DIR}/*/ | tail -1)
-PYTHON3=${PYTHON3_DIR}/bin/python3
-PYTHON=${PYTHON3_DIR}/bin/python
-if [[ ! -f "${PYTHON3}" ]]; then
-  echo -e "\033[31m[OHOS ERROR] Please execute the build/prebuilts_download.sh \033[0m"
-  exit 1
-else
-  if [[ ! -f "${PYTHON}" ]]; then
-    ln -sf "${PYTHON3}" "${PYTHON}"
-  fi
+case $(uname -s) in
+    Darwin) _py_os="darwin" ;;
+    *) _py_os="linux" ;;
+esac
+PYTHON3_DIR=$(realpath ${ROOT_PATH}/prebuilts/python/${_py_os}-${_py_cpu}/*/ 2>/dev/null | tail -1)
+if [ -n "${PYTHON3_DIR}" ] && [ -f "${PYTHON3_DIR}/bin/python3" ]; then
+    if [ ! -f "${PYTHON3_DIR}/bin/python" ]; then
+        ln -sf "${PYTHON3_DIR}/bin/python3" "${PYTHON3_DIR}/bin/python"
+    fi
+    export PATH=${PYTHON3_DIR}/bin:$PATH
 fi
-
-export PATH=${SOURCE_ROOT_DIR}/prebuilts/build-tools/${HOST_DIR}/bin:${PYTHON3_DIR}/bin:$PATH
 
 # Called in the warm-up process to ensure that the docker is the latest SDK every day
 # Called like this: ./build.sh --build_sdk
