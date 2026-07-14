@@ -122,6 +122,23 @@ if [ "$arg_help" != "0" ]; then
         exit 1;
 fi
 
+case $(uname -m) in
+    *x86_64) _py_cpu="x86" ;;
+    *arm* | *aarch64) _py_cpu="arm64" ;;
+    *) _py_cpu="x86" ;;
+esac
+case $(uname -s) in
+    Darwin) _py_os="darwin" ;;
+    *) _py_os="linux" ;;
+esac
+PYTHON3_DIR=$(realpath ${ROOT_PATH}/prebuilts/python/${_py_os}-${_py_cpu}/*/ 2>/dev/null | tail -1)
+if [ -n "${PYTHON3_DIR}" ] && [ -f "${PYTHON3_DIR}/bin/python3" ]; then
+    if [ ! -f "${PYTHON3_DIR}/bin/python" ]; then
+        ln -sf "${PYTHON3_DIR}/bin/python3" "${PYTHON3_DIR}/bin/python"
+    fi
+    export PATH=${PYTHON3_DIR}/bin:$PATH
+fi
+
 # Called in the warm-up process to ensure that the docker is the latest SDK every day
 # Called like this: ./build.sh --build_sdk
 if [ "$arg_build_sdk" == "1" ]; then
@@ -140,7 +157,6 @@ if [ "$arg_build_sdk" == "true" ]; then
 	export OHOS_SDK_HOME=${ohos_sdk_path}
     echo "set OHOS_SDK_HOME to" ${OHOS_SDK_HOME}
 fi
-
 
 export PATH=/home/tools/command-line-tools/ohpm/bin:$PATH
 npm config set registry https://repo.huaweicloud.com/repository/npm/
