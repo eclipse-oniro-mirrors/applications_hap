@@ -267,12 +267,6 @@ ohos_prebuilt_etc("securityPrivacyCenter_hap") {
   subsystem_name = "applications"
 }
 
-ohos_prebuilt_etc("updateapp_hap") {
-  source = "UpdateApp.hap"
-  module_install_dir = "app/com.ohos.updateapp"
-  part_name = "prebuilt_hap"
-  subsystem_name = "applications"
-}
 
 ohos_prebuilt_etc("printspooler_hap") {
   source = hap_src_dir + "PrintSpooler.hap"
@@ -403,6 +397,13 @@ ohos_prebuilt_etc("startup_guide_hap") {
 ohos_prebuilt_etc("tips_hap") {
   source = hap_src_dir + "Tips.hap"
   module_install_dir = "app/com.ohos.tips"
+  part_name = "prebuilt_hap"
+  subsystem_name = "applications"
+}
+
+ohos_prebuilt_etc("updateapp_hap") {
+  source = hap_src_dir + "UpdateApp.hap"
+  module_install_dir = "app/com.ohos.updateapp"
   part_name = "prebuilt_hap"
   subsystem_name = "applications"
 }
