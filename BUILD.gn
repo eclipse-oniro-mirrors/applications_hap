@@ -423,7 +423,7 @@ ohos_prebuilt_etc("players_hap") {
 }
 
 ohos_prebuilt_etc("ScreenRecorder_hap") {
-  source = hap_src_dir + "ScreenRecorder_pc.hap"
+  source = hap_src_dir + "ScreenRecorder.hap"
   module_install_dir = "app/com.ohos.screenrecorder"
   part_name = "prebuilt_hap"
   subsystem_name = "applications"
