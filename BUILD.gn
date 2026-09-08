@@ -413,7 +413,7 @@ ohos_prebuilt_etc("browser_hap") {
   part_name = "prebuilt_hap"
   subsystem_name = "applications"
 }
- 	 
+
 ohos_prebuilt_etc("players_hap") {
   source = hap_src_dir + "Players.hap"
   module_install_dir = "app/com.ohos.players"
